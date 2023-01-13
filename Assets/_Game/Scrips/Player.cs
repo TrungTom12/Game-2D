@@ -161,7 +161,7 @@ public class Player : MonoBehaviour
 
     private void ResetAttack()
     {
-        Debug.Log("3");
+        
         ChangeAnim("idle");
         isAttack = false;
     }
@@ -201,7 +201,4 @@ public class Player : MonoBehaviour
         savePoint = transform.position;
     }
 }
-
-//sflslfjslkjfksjd 
-
  
