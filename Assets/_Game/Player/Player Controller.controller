@@ -207,7 +207,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Square
+  m_Name: Player Controller
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: idle
@@ -301,13 +301,13 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 5534079337587533256}
-    m_Position: {x: -200, y: 270, z: 0}
+    m_Position: {x: -190, y: 260, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 8654722837015708486}
     m_Position: {x: -200, y: 110, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 6138993134035467042}
-    m_Position: {x: -200, y: 380, z: 0}
+    m_Position: {x: -190, y: 380, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 3880469459616705240}
     m_Position: {x: -200, y: 490, z: 0}

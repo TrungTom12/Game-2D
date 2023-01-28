@@ -3,14 +3,18 @@ using System;
 using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.Experimental.AI;
+using UnityEngine.TextCore.Text;
 
-public class Player : MonoBehaviour
+public class Player : Character
 {
     [SerializeField] private Rigidbody2D rb;
-    [SerializeField] private Animator anim;
+   // [SerializeField] private Animator anim;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float speed = 5;
     [SerializeField] private float jumpForce = 350;
+    [SerializeField] private Kunai kunaiPrefab;
+    [SerializeField] private Transform throwPoint;
+    [SerializeField] private GameObject attackArea;
 
     private bool isGrounded = true;  
     private bool isJumping = false;
@@ -25,13 +29,11 @@ public class Player : MonoBehaviour
 
     private Vector3 savePoint;
     // Start is called before the first frame update 
-    void Start() //(part 2)
+   /* void Start() //(part 2)
     {
-        SavePoint();
-        
-        OnInit();
+        //SavePoint();     
     }
-
+    */
     // Update is called once per frame   
     void Update()
     {
@@ -111,14 +113,28 @@ public class Player : MonoBehaviour
 
     }
 
-    public void OnInit() // reset các thông số đưa về các trạng thái đầu tiên (part 2)
+    public override void OnInit() // reset các thông số đưa về các trạng thái đầu tiên (part 2)
     {
+        base.OnInit(); 
         isDeath = false;
         isAttack = false;
 
         transform.position = savePoint;
-       
         ChangeAnim("idle");
+        DeActiveAttack();
+
+        SavePoint();
+    }
+
+    public override void OnDespawn()
+    {
+        base.OnDespawn();
+        OnInit();
+    }
+
+    protected override void OnDeath()
+    {
+        base.OnDeath();
     }
 
     private bool CheckGround()
@@ -142,13 +158,17 @@ public class Player : MonoBehaviour
         ChangeAnim("attack");
         isAttack = true;
         Invoke(nameof(ResetAttack), 0.5f);
+        ActiveAttack();
+        Invoke(nameof(DeActiveAttack), 0.5f);
     }
 
     private void Throw()
-    {
+    {  
         ChangeAnim("throw");
         isAttack = true;
         Invoke(nameof(ResetAttack), 0.5f);
+
+        Instantiate(kunaiPrefab, throwPoint.position ,throwPoint.rotation);
     }
 
     private void Jump()
@@ -167,7 +187,7 @@ public class Player : MonoBehaviour
     }
 
     //project nào cũng dùng 
-    private void ChangeAnim(string animName)
+  /*  private void ChangeAnim(string animName)
     {
         Debug.Log(animName);
         if (currentAnimName != animName)
@@ -177,6 +197,7 @@ public class Player : MonoBehaviour
             anim.SetTrigger(currentAnimName);
         }
     }
+  */
 
     //Coin (part 2)
     private void OnTriggerEnter2D(Collider2D collision)
@@ -199,6 +220,16 @@ public class Player : MonoBehaviour
     internal void SavePoint()
     {
         savePoint = transform.position;
+    }
+
+    private void ActiveAttack()
+    {
+        attackArea.SetActive(true);
+    }
+
+    private void DeActiveAttack()
+    {
+        attackArea.SetActive(false);   
     }
 }
  
