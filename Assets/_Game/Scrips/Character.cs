@@ -29,7 +29,7 @@ public class Character : MonoBehaviour
 
     protected virtual void OnDeath()
     {
-        ChagneAnim("Die");
+        ChagneAnim("die");
         Invoke(nameof(OnDespawn), 2f);
     }
 

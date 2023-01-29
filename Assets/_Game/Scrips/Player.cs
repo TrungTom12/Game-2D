@@ -23,7 +23,7 @@ public class Player : Character
 
     private float horizontal;
  
-    private string currentAnimName;
+   // private string currentAnimName;
 
     private int coin = 0;
 
@@ -135,6 +135,7 @@ public class Player : Character
     protected override void OnDeath()
     {
         base.OnDeath();
+
     }
 
     private bool CheckGround()
@@ -168,7 +169,7 @@ public class Player : Character
         isAttack = true;
         Invoke(nameof(ResetAttack), 0.5f);
 
-        Instantiate(kunaiPrefab, throwPoint.position ,throwPoint.rotation);
+        Instantiate(kunaiPrefab, throwPoint.position ,throwPoint.rotation);   
     }
 
     private void Jump()
@@ -186,7 +187,7 @@ public class Player : Character
         isAttack = false;
     }
 
-    //project nào cũng dùng 
+    //project nào cũng dùng (da cho vao character) 
   /*  private void ChangeAnim(string animName)
     {
         Debug.Log(animName);
