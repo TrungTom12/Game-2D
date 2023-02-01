@@ -8,7 +8,7 @@ using UnityEngine.TextCore.Text;
 public class Player : Character
 {
     [SerializeField] private Rigidbody2D rb;
-   // [SerializeField] private Animator anim;
+    //[SerializeField] private Animator anim; p3
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float speed = 5;
     [SerializeField] private float jumpForce = 350;
@@ -23,18 +23,22 @@ public class Player : Character
 
     private float horizontal;
  
-   // private string currentAnimName;
+    //private string currentAnimName; p3
 
     private int coin = 0;
 
     private Vector3 savePoint;
     // Start is called before the first frame update 
-   /* void Start() //(part 2)
-    {
-        //SavePoint();     
-    }
-    */
+    /* void Start() //(part 3)
+     {
+         //SavePoint();     
+     }
+     */
     // Update is called once per frame   
+    private void Awake()
+    {
+        coin = PlayerPrefs.GetInt("coin",0);
+    }
     void Update()
     {
 
@@ -46,7 +50,7 @@ public class Player : Character
         isGrounded = CheckGround();
 
         //-1 -> 0 -> 1 
-        horizontal = Input.GetAxisRaw("Horizontal");
+        //horizontal = Input.GetAxisRaw("Horizontal"); p4
         //verticle = Input.GetAxisRaw("Verticle");
   
         if (isAttack)
@@ -113,17 +117,20 @@ public class Player : Character
 
     }
 
-    public override void OnInit() // reset các thông số đưa về các trạng thái đầu tiên (part 2)
+    public override void OnInit() 
+    //reset các thông số đưa về các trạng thái đầu tiên p2
     {
         base.OnInit(); 
-        isDeath = false;
+        //isDeath = false; p4
         isAttack = false;
 
         transform.position = savePoint;
-        ChangeAnim("idle");
+        
         DeActiveAttack();
+        ChangeAnim("idle");
 
         SavePoint();
+        UIManager.instance.SetCoin(coin);
     }
 
     public override void OnDespawn()
@@ -149,12 +156,12 @@ public class Player : Character
         }else
         {
             return false;
-        }
-    */
+        } p1
+    */ 
         return hit.collider != null;
     }
 
-    private void Attack()
+    public void Attack()
     {
         ChangeAnim("attack");
         isAttack = true;
@@ -163,7 +170,7 @@ public class Player : Character
         Invoke(nameof(DeActiveAttack), 0.5f);
     }
 
-    private void Throw()
+    public void Throw()
     {  
         ChangeAnim("throw");
         isAttack = true;
@@ -172,7 +179,7 @@ public class Player : Character
         Instantiate(kunaiPrefab, throwPoint.position ,throwPoint.rotation);   
     }
 
-    private void Jump()
+    public void Jump()
     {
         isJumping = true;
 
@@ -200,13 +207,15 @@ public class Player : Character
     }
   */
 
-    //Coin (part 2)
+    //Coin p2
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Coin"))
         {
-            Debug.Log("Coin" + collision.gameObject.name);
+            //Debug.Log("Coin" + collision.gameObject.name);
             coin++;
+            PlayerPrefs.SetInt("coin", coin); //Luu data coin 
+            UIManager.instance.SetCoin(coin);
             Destroy(collision.gameObject);
         }
         if (collision.tag.Equals("DeathZone"))
@@ -232,5 +241,13 @@ public class Player : Character
     {
         attackArea.SetActive(false);   
     }
+
+
+    public void SetMove(float hozizontal)
+    {
+        this.horizontal = hozizontal;
+    }
+
+    
 }
  

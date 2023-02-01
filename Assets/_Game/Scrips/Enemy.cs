@@ -19,7 +19,7 @@ public class Enemy : Character
 
     private void Update()
     {
-        if (currenState != null)
+        if (currenState != null && !IsDead)
         {
             currenState.OnExecute(this);
         }
