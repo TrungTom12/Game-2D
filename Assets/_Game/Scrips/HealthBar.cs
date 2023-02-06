@@ -12,7 +12,6 @@ public class HealthBar : MonoBehaviour
     private Transform target; p4.1 (35:44)
     (su dung khi thanh mau dat ben ngoai player & enemy)
     */
-
     float hp;
     float maxHp;
 
@@ -23,7 +22,6 @@ public class HealthBar : MonoBehaviour
         imageFill.fillAmount= Mathf.Lerp(imageFill.fillAmount, hp / maxHp , Time.deltaTime * 5f);
            //transform.position = target.position + offset; p4.1
     }
-
     public void OnInit(float maxhp/*,Transform target(p4.1)*/)
     {
         //this.target = target; p4
@@ -31,7 +29,6 @@ public class HealthBar : MonoBehaviour
         hp= maxhp;
         imageFill.fillAmount = 1;
     }
-
     public void SetNewHp(float hp)
     {
         this.hp = hp;

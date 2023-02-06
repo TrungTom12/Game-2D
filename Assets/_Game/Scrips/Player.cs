@@ -7,6 +7,10 @@ using UnityEngine.TextCore.Text;
 
 public class Player : Character
 {
+
+    private float moveSpeed, dirX, dirY;
+    public bool ClimbingAllowed { get; set; }
+
     [SerializeField] private Rigidbody2D rb;
     //[SerializeField] private Animator anim; p3
     [SerializeField] private LayerMask groundLayer;
@@ -16,43 +20,40 @@ public class Player : Character
     [SerializeField] private Transform throwPoint;
     [SerializeField] private GameObject attackArea;
 
+    private GameObject currentTeleporter;
     private bool isGrounded = true;  
     private bool isJumping = false;
     private bool isAttack = false;
     private bool isDeath = false;
-
     private float horizontal;
- 
     //private string currentAnimName; p3
-
     private int coin = 0;
-
     private Vector3 savePoint;
-    // Start is called before the first frame update 
+
+    
     /* void Start() //(part 3)
      {
          //SavePoint();     
      }
      */
-    // Update is called once per frame   
     private void Awake()
     {
         coin = PlayerPrefs.GetInt("coin",0);
+
+        rb = GetComponent<Rigidbody2D>();
+        moveSpeed = 5f;
+
     }
     void Update()
     {
-
         if (isDeath)
         {
             return;
         }
-
         isGrounded = CheckGround();
-
         //-1 -> 0 -> 1 
         //horizontal = Input.GetAxisRaw("Horizontal"); p4
         //verticle = Input.GetAxisRaw("Verticle");
-  
         if (isAttack)
         {
             rb.velocity = Vector2.zero;
@@ -115,6 +116,38 @@ public class Player : Character
             rb.velocity = Vector2.zero; 
         }
 
+        //Teleporter
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (currentTeleporter != null)
+            {
+                transform.position = currentTeleporter.GetComponent<Teleporter>().GetDestination().position;
+            }
+        }
+
+        //Ladder
+        dirX = Input.GetAxisRaw("Horizontal") * moveSpeed;
+
+        if (ClimbingAllowed)
+        {
+            dirY = Input.GetAxisRaw("Vertical") * moveSpeed;
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        
+        if (ClimbingAllowed)
+        {
+            //Debug.Log("TTTTTTTT");
+            rb.isKinematic = true;
+            rb.velocity = new Vector2(dirX, dirY);
+        }
+        else
+        {
+            rb.isKinematic = false;
+            rb.velocity = new Vector2(dirX, rb.velocity.y);
+        }
     }
 
     public override void OnInit() 
@@ -132,19 +165,16 @@ public class Player : Character
         SavePoint();
         UIManager.instance.SetCoin(coin);
     }
-
     public override void OnDespawn()
     {
         base.OnDespawn();
         OnInit();
     }
-
     protected override void OnDeath()
     {
         base.OnDeath();
 
     }
-
     private bool CheckGround()
     {
         Debug.DrawLine(transform.position, transform.position + Vector3.down * 1.1f, Color.red);
@@ -160,7 +190,6 @@ public class Player : Character
     */ 
         return hit.collider != null;
     }
-
     public void Attack()
     {
         ChangeAnim("attack");
@@ -169,7 +198,6 @@ public class Player : Character
         ActiveAttack();
         Invoke(nameof(DeActiveAttack), 0.5f);
     }
-
     public void Throw()
     {  
         ChangeAnim("throw");
@@ -178,7 +206,6 @@ public class Player : Character
 
         Instantiate(kunaiPrefab, throwPoint.position ,throwPoint.rotation);   
     }
-
     public void Jump()
     {
         isJumping = true;
@@ -186,7 +213,11 @@ public class Player : Character
         ChangeAnim("jump");
         rb.AddForce(jumpForce * Vector2.up);
     }  
-
+    public void Climb()
+    {
+        ChangeAnim("climb");
+        
+    }
     private void ResetAttack()
     {
         
@@ -206,7 +237,6 @@ public class Player : Character
         }
     }
   */
-
     //Coin p2
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -225,29 +255,44 @@ public class Player : Character
 
             Invoke(nameof(OnInit), 1f);
         }
+
+        //teleporter
+        if (collision.CompareTag("Teleporter"))
+        {
+            currentTeleporter = collision.gameObject;
+        }
+
     }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        //teleporter
+        if (collision.CompareTag("Teleporter"))
+        {
+            if (collision.gameObject == currentTeleporter)
+            {
+                currentTeleporter = null;
+            }
+        }
+    }
+
+
 
     internal void SavePoint()
     {
         savePoint = transform.position;
     }
-
     private void ActiveAttack()
     {
         attackArea.SetActive(true);
     }
-
     private void DeActiveAttack()
     {
         attackArea.SetActive(false);   
     }
-
-
     public void SetMove(float hozizontal)
     {
         this.horizontal = hozizontal;
-    }
-
-    
+    } 
 }
  

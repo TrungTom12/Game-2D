@@ -9,6 +9,8 @@ TagManager:
   - SavePoint
   - EnemyWall
   - Enemy
+  - Ladder
+  - Teleporter
   layers:
   - Default
   - TransparentFX

@@ -11,7 +11,6 @@ public class CombatText : MonoBehaviour
         hpText.text = damage.ToString();
         Invoke(nameof(OnDespawn), 1f);
     }
-
     public void OnDespawn()
     {
         Destroy(gameObject);
