@@ -8,9 +8,6 @@ using UnityEngine.TextCore.Text;
 public class Player : Character
 {
 
-    private float moveSpeed, dirX, dirY;
-    public bool ClimbingAllowed { get; set; }
-
     [SerializeField] private Rigidbody2D rb;
     //[SerializeField] private Animator anim; p3
     [SerializeField] private LayerMask groundLayer;
@@ -26,6 +23,8 @@ public class Player : Character
     private bool isAttack = false;
     private bool isDeath = false;
     private float horizontal;
+
+    private bool isShield = false;
     //private string currentAnimName; p3
     private int coin = 0;
     private Vector3 savePoint;
@@ -40,8 +39,8 @@ public class Player : Character
     {
         coin = PlayerPrefs.GetInt("coin",0);
 
-        rb = GetComponent<Rigidbody2D>();
-        moveSpeed = 5f;
+        //rb = GetComponent<Rigidbody2D>();
+        //moveSpeed = 5f;
 
     }
     void Update()
@@ -53,7 +52,6 @@ public class Player : Character
         isGrounded = CheckGround();
         //-1 -> 0 -> 1 
         //horizontal = Input.GetAxisRaw("Horizontal"); p4
-        //verticle = Input.GetAxisRaw("Verticle");
         if (isAttack)
         {
             rb.velocity = Vector2.zero;
@@ -89,6 +87,12 @@ public class Player : Character
             {
                 Throw();
             }
+
+            //Shield
+            if (Input.GetKeyDown(KeyCode.X) && isGrounded)
+            {
+              
+            }
         }
         
         //check falling 
@@ -110,7 +114,7 @@ public class Player : Character
         }
 
         //Idle
-        else if (isGrounded && !isJumping && ! isAttack)
+        else if (isGrounded && !isJumping && !isAttack)
         {
             ChangeAnim("idle");   
             rb.velocity = Vector2.zero; 
@@ -125,29 +129,7 @@ public class Player : Character
             }
         }
 
-        //Ladder
-        dirX = Input.GetAxisRaw("Horizontal") * moveSpeed;
-
-        if (ClimbingAllowed)
-        {
-            dirY = Input.GetAxisRaw("Vertical") * moveSpeed;
-        }
-    }
-
-    private void FixedUpdate()
-    {
-        
-        if (ClimbingAllowed)
-        {
-            //Debug.Log("TTTTTTTT");
-            rb.isKinematic = true;
-            rb.velocity = new Vector2(dirX, dirY);
-        }
-        else
-        {
-            rb.isKinematic = false;
-            rb.velocity = new Vector2(dirX, rb.velocity.y);
-        }
+     
     }
 
     public override void OnInit() 
@@ -179,15 +161,6 @@ public class Player : Character
     {
         Debug.DrawLine(transform.position, transform.position + Vector3.down * 1.1f, Color.red);
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1.1f, groundLayer);
-    /*
-        if ( hit != null ) 
-        {
-            return true;
-        }else
-        {
-            return false;
-        } p1
-    */ 
         return hit.collider != null;
     }
     public void Attack()
@@ -213,30 +186,13 @@ public class Player : Character
         ChangeAnim("jump");
         rb.AddForce(jumpForce * Vector2.up);
     }  
-    public void Climb()
-    {
-        ChangeAnim("climb");
-        
-    }
+   
     private void ResetAttack()
     {
         
         ChangeAnim("idle");
         isAttack = false;
     }
-
-    //project nào cũng dùng (da cho vao character) 
-  /*  private void ChangeAnim(string animName)
-    {
-        Debug.Log(animName);
-        if (currentAnimName != animName)
-        {
-            anim.ResetTrigger(animName);
-            currentAnimName = animName;
-            anim.SetTrigger(currentAnimName);
-        }
-    }
-  */
     //Coin p2
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -275,8 +231,6 @@ public class Player : Character
             }
         }
     }
-
-
 
     internal void SavePoint()
     {
